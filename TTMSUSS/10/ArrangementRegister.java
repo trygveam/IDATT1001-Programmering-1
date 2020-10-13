@@ -1,68 +1,35 @@
 import javax.swing.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class ArrangementRegister {
-    private Arrangement[] arrangements;
-    private int posNumber = 0;
+    private ArrayList<Arrangement> arrangements = new ArrayList<>();
 
-    // Disclaimer, using arrays, ArrayList would be a better alternative
-    public ArrangementRegister(int size) {
-        arrangements = new Arrangement[size];
+    public void addArrangement(Arrangement arrangement) {
+        if(arrangements.contains(arrangement)){
+            throw new IllegalArgumentException("allready in");
+        }
+        else{
+            arrangements.add(arrangement);
+        }
     }
 
-    public void addArrangement(int nr, String name, String location, String organizer, String type, int date) {
-        if (posNumber == arrangements.length) {
-            Arrangement[] boo = new Arrangement[arrangements.length + 1];
-            for (int i = 0; i < arrangements.length; i++) {
-                boo[i] = arrangements[i];
-            }
-            // One-liner for copying array System.arraycopy(arrangements, 0, boo, 0, arrangements.length);
-            arrangements = boo;
-        }
-        arrangements[posNumber] = new Arrangement(nr, name, location, organizer, type, date);
-        posNumber++;
+    public ArrayList<Arrangement> findArrangementsLocation(String location) {
+        return arrangements.stream().filter(a->a.getLocation().equals(location)).collect(Collectors.toCollection(ArrayList::new));
+    }
+    public ArrayList<Arrangement> findArrangementsDate(int date) {
+        return arrangements.stream().filter(a->a.getDate()==date).collect(Collectors.toCollection(ArrayList::new));
+    }
+    public ArrayList<Arrangement> findArrangementsDates(int lowerBound, int upperBound) {
+        return arrangements.stream().filter(a->a.getDate() > lowerBound && a.getDate() < upperBound).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public Arrangement[] findArrangementsLocation(String location) {
-        int pos = 0;
-        Arrangement[] temp = new Arrangement[arrangements.length];
-        for (Arrangement arr : arrangements) {
-            if (arr.getLocation().equals(location)) {
-                temp[pos] = arr;
-                pos++;
-            }
-        }
-        if (temp[0] == null) {
-            return null;
-        }
-        return temp;
-    }
 
-    public Arrangement[] findArrangementsDate(int date) {
-        int pos = 0;
-        Arrangement[] temp = new Arrangement[arrangements.length];
-        for (Arrangement arr : arrangements) {
-            if (arr.getDate() == date) {
-                temp[pos] = arr;
-                pos++;
-            }
-        }
-        return temp;
-    }
-
-    public Arrangement[] findArrangementsOnDates(int dateLeft, int dateRight) {
-        int pos = 0;
-        Arrangement[] temp = new Arrangement[arrangements.length];
-        for (Arrangement arr : arrangements) {
-            if (arr.getDate() > dateLeft && arr.getDate() < dateRight) {
-                temp[pos] = arr;
-                pos++;
-            }
-        }
-        return temp;
-    }
-
-    public String print(Arrangement[] arr) {
+    public String print(ArrayList<Arrangement> arr) {
         String s = "";
         for (Arrangement a : arr) {
             s += a.toString() + "\n";
@@ -70,6 +37,7 @@ public class ArrangementRegister {
        return s;
     }
 
+    @Override
     public String toString() {
         String s = "";
         for (Arrangement a : arrangements) {
@@ -78,16 +46,26 @@ public class ArrangementRegister {
         return s;
     }
 
+
     public static void main(String[] args) {
-        ArrangementRegister ar = new ArrangementRegister(8);
-        ar.addArrangement(1, "lan", "bodo", "LKI", "gaming", 2010071800);
-        ar.addArrangement(2, "sport", "bodo", "LKI", "gaming", 2010072000);
-        ar.addArrangement(3, "klubb", "svolvor", "LKI", "gaming", 2010072200);
-        ar.addArrangement(4, "trening", "harstad", "LKI", "gaming", 2010071600);
-        ar.addArrangement(5, "klubb", "svolvor", "LKI", "gaming", 2010072200);
-        ar.addArrangement(6, "trening", "harstad", "LKI", "gaming", 2010071600);
-        ar.addArrangement(7, "klubb", "narvik", "TKO", "gaming", 2010070900);
-        ar.addArrangement(8, "trening", "narvik", "TKO", "workout", 2010072400);
+        ArrangementRegister ar = new ArrangementRegister();
+        Arrangement a1 = new Arrangement(1, "lan", "bodo", "LKI", "gaming", 2010071800);
+        Arrangement a2 = new Arrangement(2, "sport", "bodo", "LKI", "gaming", 2010072000);
+        Arrangement a3 = new Arrangement(3, "klubb", "svolvor", "LKI", "gaming", 2010072200);
+        Arrangement a4 = new Arrangement(4, "trening", "harstad", "LKI", "gaming", 2010071600);
+        Arrangement a5 = new Arrangement(5, "klubb", "svolvor", "LKI", "gaming", 2010072200);
+        Arrangement a6 = new Arrangement(6, "trening", "harstad", "LKI", "gaming", 2010071600);
+        Arrangement a7 = new Arrangement(7, "klubb", "narvik", "TKO", "gaming", 2010070900);
+        Arrangement a8 = new Arrangement(8, "trening", "narvik", "TKO", "workout", 2010072400);
+        ar.addArrangement(a1);
+        ar.addArrangement(a2);
+        ar.addArrangement(a3);
+        ar.addArrangement(a4);
+        ar.addArrangement(a5);
+        ar.addArrangement(a6);
+        ar.addArrangement(a7);
+        ar.addArrangement(a8);
+
 
         boolean start = true;
         String[] options = {"Add arrangement",
@@ -109,7 +87,7 @@ public class ArrangementRegister {
                     String organizer = JOptionPane.showInputDialog("organizer");
                     String type = JOptionPane.showInputDialog("type");
                     int date = Integer.parseInt(JOptionPane.showInputDialog("date:"));
-                    ar.addArrangement(ans, name, location, organizer, type, date);
+                    ar.addArrangement(new Arrangement(ans, name, location, organizer, type, date));
                     break;
 
                 case "Find arrangement by location":
@@ -129,23 +107,38 @@ public class ArrangementRegister {
                 case "Find arrangement between dates":
                     int dateLeft = Integer.parseInt(JOptionPane.showInputDialog("Dateleft:"));
                     int dateRight = Integer.parseInt(JOptionPane.showInputDialog("DateRight:"));
-                    if (ar.findArrangementsOnDates(dateLeft, dateRight) != null) {
-                        JOptionPane.showMessageDialog(null, ar.findArrangementsOnDates(dateLeft, dateRight));
+                    if (ar.findArrangementsDates(dateLeft, dateRight) != null) {
+                        JOptionPane.showMessageDialog(null, ar.findArrangementsDates(dateLeft, dateRight));
                     }
                     break;
 
                 case "Sort arrangement by location":
-                    Arrays.sort(ar.arrangements, Arrangement::compareToLocation);
+                    ar.arrangements.sort(new Comparator<Arrangement>() {
+                        @Override
+                        public int compare(Arrangement o1, Arrangement o2) {
+                            return o1.getLocation().compareTo(o2.getLocation());
+                        }
+                    });
                     JOptionPane.showMessageDialog(null, ar.toString());
                     break;
 
                 case "Sort arrangement by date":
-                    Arrays.sort(ar.arrangements, Arrangement::compareTo);
+                    ar.arrangements.sort(new Comparator<Arrangement>() {
+                        @Override
+                        public int compare(Arrangement o1, Arrangement o2) {
+                            return o1.getDate() - o2.getDate();
+                        }
+                    });
                     JOptionPane.showMessageDialog(null, ar.toString());
                     break;
 
                 case "Sort arrangement by type":
-                    Arrays.sort(ar.arrangements, Arrangement::compareToType);
+                    ar.arrangements.sort(new Comparator<Arrangement>() {
+                        @Override
+                        public int compare(Arrangement o1, Arrangement o2) {
+                            return o1.getType().compareTo(o2.getType());
+                        }
+                    });
                     JOptionPane.showMessageDialog(null, ar.toString());
                     break;
 

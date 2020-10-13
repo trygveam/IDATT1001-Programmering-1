@@ -3,7 +3,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Arrangement implements Comparable<Arrangement> {
+public class Arrangement {
     private int nr;
     private String name;
     private String location;
@@ -55,16 +55,5 @@ public class Arrangement implements Comparable<Arrangement> {
                 ", type: '" + type + '\'' +
                 ", date: " + date +
                 '}';
-    }
-
-    public int compareToLocation(Arrangement ar){
-        return this.getLocation().compareTo(ar.getLocation());
-    }
-    public int compareToType(Arrangement ar){
-        return this.getType().compareTo(ar.getType());
-    }
-    @Override
-    public int compareTo(Arrangement o) {
-        return this.getDate()-o.getDate();
     }
 }
