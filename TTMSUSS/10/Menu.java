@@ -1,7 +1,17 @@
 import java.util.ArrayList;
 
 public class Menu {
+
+    private String name;
     ArrayList<Dish> dishes = new ArrayList<>();
+
+    public Menu(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
+    }
 
     public void addDishToMenu(Dish dish) {
         if (!dishes.contains(dish)) {
@@ -11,7 +21,7 @@ public class Menu {
         }
     }
 
-    public void removeDishToMenu(Dish dish) {
+    public void removeDishFromMenu(Dish dish) {
         if (dishes.contains(dish)) {
             dishes.remove(dish);
         } else {
